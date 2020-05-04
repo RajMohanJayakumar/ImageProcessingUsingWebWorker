@@ -1,0 +1,54 @@
+<!-- Displaying the image in the browser using file reader -->
+
+<html>
+    <head>
+        <title>Image Processing Stage - 1</title>
+        <style type='text/css'>
+            #input{
+                height: 0px;
+                width: 0px;
+                overflow: hidden;
+            }
+            label{
+                display: inline-block;
+                background-color: brown;
+                padding: 5px;
+                cursor: pointer;
+                color: white;
+                font-size: 1.2em;
+            }
+            #input:focus + label {
+                display: inline-block;
+                background-color:darkslateblue;
+                padding: 5px;
+                cursor: pointer;
+                
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+        <input type='file' accept="image/*" id='input'>
+        <label for='input'>Choose an image</label>
+        </div>
+    </body>
+    <script>
+        const $input = document.getElementById('input');
+        const fileReader = new FileReader();
+        const image = new Image();
+
+        image.addEventListener('load', event => {
+            document.body.appendChild(image)
+        })
+
+        fileReader.addEventListener('load', event => {
+            image.src = event.target.result;
+        })
+
+        $input.addEventListener('change', (event)=>{
+            const file = event.target.files[0];
+            fileReader.readAsDataURL(file)
+        })
+
+    </script>
+</html>
