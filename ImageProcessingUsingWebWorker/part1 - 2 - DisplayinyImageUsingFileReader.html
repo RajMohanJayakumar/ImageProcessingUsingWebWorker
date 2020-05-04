@@ -42,7 +42,8 @@
         })
 
         fileReader.addEventListener('load', event => {
-            image.src = event.target.result;
+            const base64 = event.target.result
+            image.src = base64
         })
 
         $input.addEventListener('change', (event)=>{
