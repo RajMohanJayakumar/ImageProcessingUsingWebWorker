@@ -1,0 +1,70 @@
+<!-- Image processing without using webworker -->
+
+<html>
+    <head>
+        <title>Image Processing Stage - 2</title>
+        <style type='text/css'>
+            #input{
+                height: 0px;
+                width: 0px;
+                overflow: hidden;
+            }
+            label{
+                display: inline-block;
+                background-color: brown;
+                padding: 5px;
+                cursor: pointer;
+                color: white;
+                font-size: 1.2em;
+            }
+            #input:focus + label {
+                display: inline-block;
+                background-color:darkslateblue;
+                padding: 5px;
+                cursor: pointer;
+                
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+        <input type='file' accept="image/*" id='input'>
+        <label for='input'>Choose an image</label>
+        </div>
+        <br>
+        <canvas id='preview'></canvas>
+    </body>
+    <script>
+        const $input = document.getElementById('input')
+        const $preview = document.getElementById('preview')
+        const previewCtx = $preview.getContext('2d')
+        const image = new Image();
+
+        function applyFilters(){
+            const imageData = previewCtx.getImageData(0,0, $preview.width, $preview.height);
+            
+            for(let x = 0; x < imageData.width; x++){
+                for(let y = 0; y < imageData.height; y++){
+                    let index = (x + (y * imageData.width)) * 4;
+
+                    // imageData.data[index + 3] = 127
+                    
+                    // Incresing the red shade
+                    imageData.data[index] = imageData.data[index] * 1.2
+                }
+            }
+
+            previewCtx.putImageData(imageData,0,0);
+        }
+
+        $input.addEventListener('change', (event)=>{
+            createImageBitmap(event.target.files[0])
+            .then(bitmap => {
+                $preview.width = bitmap.width;
+                $preview.height = bitmap.height;
+                previewCtx.drawImage(bitmap,0,0)
+                applyFilters()
+            })
+        })
+    </script>
+</html>
