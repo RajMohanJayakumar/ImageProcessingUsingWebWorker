@@ -1,0 +1,66 @@
+<!-- ImageProcessing with webWorker - Final -->
+
+<html>
+    <head>
+        <title>Image Processing Stage - 1</title>
+        <style type='text/css'>
+            #input{
+                height: 0px;
+                width: 0px;
+                overflow: hidden;
+            }
+            label{
+                display: inline-block;
+                background-color: brown;
+                padding: 5px;
+                cursor: pointer;
+                color: white;
+                font-size: 1.2em;
+            }
+            #input:focus + label {
+                display: inline-block;
+                background-color:darkslateblue;
+                padding: 5px;
+                cursor: pointer;
+                
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <input type='file' accept="image/*" id='input'>
+            <label for='input'>Choose an image</label>
+        </div>
+        <canvas id="preview"></canvas>
+    </body>
+    <script>
+       const $input = document.getElementById('input');
+       const $preview = document.getElementById('preview');
+       const previewCtx = $preview.getContext('2d');
+
+       const webworker = new Worker('webworker.js');
+
+       webworker.addEventListener('message', (e)=>{
+            previewCtx.putImageData(e.data, 0, 0)
+       })
+
+
+       function applyFilter(){
+           const imageData = previewCtx.getImageData(0, 0, $preview.width, $preview.height)
+           webworker.postMessage(imageData, [imageData.data.buffer]);
+
+           //webworker.postMessage(imageData); // This code also should work
+       }
+
+       $input.addEventListener('change', (e) => {
+            createImageBitmap(e.target.files[0])
+            .then(bitmap => {
+                $preview.width = bitmap.width;
+                $preview.height = bitmap.height;
+                previewCtx.drawImage(bitmap, 0, 0)
+                applyFilter()
+            })
+       })
+
+    </script>
+</html>
