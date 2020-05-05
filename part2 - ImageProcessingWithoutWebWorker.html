@@ -1,0 +1,92 @@
+<!-- Image processing without using webworker -->
+
+<html>
+    <head>
+        <title>Image Processing Stage - 2</title>
+        <style type='text/css'>
+            #input{
+                height: 0px;
+                width: 0px;
+                overflow: hidden;
+            }
+            label{
+                display: inline-block;
+                background-color: brown;
+                padding: 5px;
+                cursor: pointer;
+                color: white;
+                font-size: 1.2em;
+            }
+            #input:focus + label {
+                display: inline-block;
+                background-color:darkslateblue;
+                padding: 5px;
+                cursor: pointer;
+                
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+        <input type='file' accept="image/*" id='input'>
+        <label for='input'>Choose an image</label>
+        </div>
+        <br>
+        <canvas id='preview'></canvas>
+    </body>
+    <script>
+        const $input = document.getElementById('input');
+        const $preview = document.getElementById('preview');
+        const previewCtx = $preview.getContext('2d');
+
+        const fileReader = new FileReader();
+        const image = new Image();
+
+        function applyEffects(){
+            let imageData = previewCtx.getImageData(0, 0, image.width, image.height);
+
+            for(let x = 0; x < image.width; x++ ){
+                for(let y = 0; y < image.height; y++){
+
+                    // one index is one pixel : 
+                    // imageData.data[index]     - Red     ( 0 - 255 )
+                    // imageData.data[index + 1] - Green   ( 0 - 255 )
+                    // imageData.data[index + 2] - Blue    ( 0 - 255 )
+                    // imageData.data[index + 3] - Alpha   ( 0 - 255 )
+
+                    let index = (x + (y * image.width)) * 4;
+
+                    imageData.data[index] = imageData.data[index] * 1.2;
+
+
+
+                    // if(imageData.data[index+3] == 255){
+                        // imageData.data[index] = 102;
+                        // imageData.data[index + 1] = 255;
+                        // imageData.data[index + 2] = 0;
+                    // }
+                }
+            }
+            previewCtx.putImageData(imageData,0,0)
+        }
+
+        image.addEventListener('load', event => {
+            $preview.width = image.width;
+            $preview.height = image.height;
+            previewCtx.drawImage(image,0,0);
+            // console.log(previewCtx.getImageData(0,0,image.width,image.height))
+            applyEffects();
+        })
+
+        fileReader.addEventListener('load', event => {
+            const base64 = event.target.result
+            image.src = base64
+        })
+
+        $input.addEventListener('change', (event)=>{
+            const file = event.target.files[0];
+            fileReader.readAsDataURL(file)
+        })
+
+    </script>
+</html>
