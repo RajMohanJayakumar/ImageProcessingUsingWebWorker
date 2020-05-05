@@ -58,13 +58,9 @@
 
                     imageData.data[index] = imageData.data[index] * 1.2;
 
+                    /* Adjusting the alpha */
+                    // imageData.data[index+3] = 127
 
-
-                    // if(imageData.data[index+3] == 255){
-                        // imageData.data[index] = 102;
-                        // imageData.data[index + 1] = 255;
-                        // imageData.data[index + 2] = 0;
-                    // }
                 }
             }
             previewCtx.putImageData(imageData,0,0)
